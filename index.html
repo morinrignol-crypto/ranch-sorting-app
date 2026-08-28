@@ -306,13 +306,17 @@
         <div id="group-couleur-fields" style="display:none;">
             <div class="grid-2">
                 <div>
-                    <label>Couleur Collier</label>
-                    <input type="text" id="v-couleur" placeholder="Ex: Rouge">
+                    <label>Couleur Collier (Fond)</label>
+                    <input type="text" id="v-couleur-fond" placeholder="Ex: Blanc">
                 </div>
                 <div>
-                    <label>Num Vache</label>
-                    <input type="text" id="v-num-vache-c" placeholder="Ex: 7">
+                    <label>Couleur Numéro</label>
+                    <input type="text" id="v-couleur-numero" placeholder="Ex: Vert">
                 </div>
+            </div>
+            <div style="margin-top: 10px;">
+                <label>Num Vache</label>
+                <input type="text" id="v-num-vache-c" placeholder="Ex: 7">
             </div>
         </div>
 
@@ -381,7 +385,7 @@
         };
 
         window.onload = function() {
-            const dataSaved = localStorage.getItem('ranchSortingApp_v3');
+            const dataSaved = localStorage.getItem('ranchSortingApp_v4');
             if (dataSaved) {
                 try { appData = JSON.parse(dataSaved); } catch(e){}
             }
@@ -392,7 +396,7 @@
         };
 
         function saveData() {
-            localStorage.setItem('ranchSortingApp_v3', JSON.stringify(appData));
+            localStorage.setItem('ranchSortingApp_v4', JSON.stringify(appData));
             renderAll();
         }
 
@@ -456,10 +460,17 @@
                 if (!tr || !numVache) return alert("Veuillez remplir les numéros.");
                 groupName = "TROUPEAU NUM " + tr;
             } else {
-                const cl = document.getElementById('v-couleur').value.trim();
+                const cFond = document.getElementById('v-couleur-fond').value.trim();
+                const cNum = document.getElementById('v-couleur-numero').value.trim();
                 numVache = document.getElementById('v-num-vache-c').value.trim();
-                if (!cl || !numVache) return alert("Veuillez remplir la couleur et le numéro.");
-                groupName = "COLLIER " + cl.toUpperCase();
+                
+                if (!cFond || !numVache) return alert("Veuillez au moins indiquer la couleur du collier et le numéro.");
+                
+                if (cNum) {
+                    groupName = "COLLIER " + cFond.toUpperCase() + " (NUM " + cNum.toUpperCase() + ")";
+                } else {
+                    groupName = "COLLIER " + cFond.toUpperCase();
+                }
             }
 
             appData.vachesList.push({
@@ -471,7 +482,8 @@
 
             document.getElementById('v-num-troupeau').value = "";
             document.getElementById('v-num-vache').value = "";
-            document.getElementById('v-couleur').value = "";
+            document.getElementById('v-couleur-fond').value = "";
+            document.getElementById('v-couleur-numero').value = "";
             document.getElementById('v-num-vache-c').value = "";
             saveData();
         }
