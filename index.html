@@ -146,6 +146,8 @@
             border-radius: 8px;
             padding: 15px 0;
             cursor: pointer;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .key-num.disabled {
@@ -250,12 +252,14 @@
 </head>
 <body>
 
+    <!-- Barre d'onglets -->
     <nav class="tabs">
         <button id="tb-compteur" class="tab-btn active" onclick="showTab('compteur')">1. COMPTEUR</button>
         <button id="tb-vaches" class="tab-btn" onclick="showTab('vaches')">2. VACHES</button>
         <button id="tb-resultats" class="tab-btn" onclick="showTab('resultats')">3. RÉSULTATS</button>
     </nav>
 
+    <!-- ONGLET 1 : COMPTEUR -->
     <section id="tab-compteur" class="tab-content active">
         <div class="keypad-grid">
             <button id="k-1" class="key-num" onclick="pressKey(1)">1</button>
@@ -274,3 +278,348 @@
             <div class="restants-title">NUMEROS RESTANTS :</div>
             <div id="restants-list" class="restants-list">0 1 2 3 4 5 6 7 8 9</div>
         </div>
+
+        <div class="actions-grid">
+            <button class="btn-action-yellow" onclick="annulerDernier()">ANNULER</button>
+            <button class="btn-action-yellow" onclick="reinitialiserCompteur()">REINITIALISER</button>
+        </div>
+    </section>
+
+    <!-- ONGLET 2 : VACHES -->
+    <section id="tab-vaches" class="tab-content">
+        <div class="section-title">SIGNALER UNE VACHE</div>
+
+        <label>Type d'identification du concours</label>
+        <select id="vache-type-id" onchange="toggleVacheFields()">
+            <option value="troupeau">Par Numero de Troupeau</option>
+            <option value="couleur">Par Couleur de Collier</option>
+        </select>
+
+        <!-- Formulaire par Numero de Troupeau -->
+        <div id="group-troupeau-fields">
+            <div class="grid-2">
+                <div>
+                    <label>Num Troupeau</label>
+                    <input type="text" id="v-num-troupeau" placeholder="Ex: 1">
+                </div>
+                <div>
+                    <label>Num Vache</label>
+                    <input type="text" id="v-num-vache" placeholder="Ex: 7">
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulaire par Couleur de Collier -->
+        <div id="group-couleur-fields" style="display:none;">
+            <div class="grid-2">
+                <div>
+                    <label>Couleur Collier (Fond)</label>
+                    <input type="text" id="v-couleur-fond" placeholder="Ex: Blanc">
+                </div>
+                <div>
+                    <label>Couleur Numéro</label>
+                    <input type="text" id="v-couleur-numero" placeholder="Ex: Vert">
+                </div>
+            </div>
+            <div style="margin-top: 10px;">
+                <label>Num Vache</label>
+                <input type="text" id="v-num-vache-c" placeholder="Ex: 7">
+            </div>
+        </div>
+
+        <label>Probleme</label>
+        <select id="v-probleme">
+            <option value="Charge">Charge</option>
+            <option value="Lente / Refuse de passer">Lente / Refuse de passer</option>
+            <option value="Sauteuse">Sauteuse</option>
+            <option value="Agressive">Agressive</option>
+            <option value="Collante au troupeau">Collante au troupeau</option>
+            <option value="Autre">Autre</option>
+        </select>
+
+        <button class="btn-main-red" onclick="enregistrerVache()">ENREGISTRER LA VACHE</button>
+
+        <div id="vaches-display-list" style="margin-top: 20px;"></div>
+    </section>
+
+    <!-- ONGLET 3 : RÉSULTATS -->
+    <section id="tab-resultats" class="tab-content">
+        <div class="section-title">ENREGISTRER UN SCORE</div>
+
+        <label>Cavalier / Equipe</label>
+        <input type="text" id="res-cavalier" placeholder="Ex: Jean / Equipe 12">
+
+        <label>Classe</label>
+        <select id="res-classe">
+            <option value="Rookie">Rookie</option>
+            <option value="LTD">LTD</option>
+            <option value="INT LTD">INT LTD</option>
+            <option value="INT OPEN">INT OPEN</option>
+            <option value="OPEN">OPEN</option>
+        </select>
+
+        <div style="margin-top: 10px; font-size: 0.85rem; font-weight: bold; color: var(--accent);">GO 1</div>
+        <div class="grid-2">
+            <div>
+                <input type="number" id="g1-vaches" placeholder="Vaches triees (Ex: 10)">
+            </div>
+            <div>
+                <input type="text" id="g1-temps" placeholder="Temps (Ex: 45.30)">
+            </div>
+        </div>
+
+        <div style="margin-top: 10px; font-size: 0.85rem; font-weight: bold; color: var(--accent);">GO 2</div>
+        <div class="grid-2">
+            <div>
+                <input type="number" id="g2-vaches" placeholder="Vaches triees (Ex: 10)">
+            </div>
+            <div>
+                <input type="text" id="g2-temps" placeholder="Temps (Ex: 38.90)">
+            </div>
+        </div>
+
+        <button class="btn-main-yellow" onclick="enregistrerResultat()">ENREGISTRER LE RESULTAT</button>
+
+        <div id="scores-display-list" style="margin-top: 20px;"></div>
+    </section>
+
+    <script>
+        let appData = {
+            currentTab: "compteur",
+            saisiesCompteur: [],
+            vachesList: [],
+            scoresList: []
+        };
+
+        window.onload = function() {
+            const dataSaved = localStorage.getItem('ranchSortingApp_v6');
+            if (dataSaved) {
+                try { 
+                    appData = JSON.parse(dataSaved);
+                    // Normalisation en nombres stricts pour le compteur
+                    if (Array.isArray(appData.saisiesCompteur)) {
+                        appData.saisiesCompteur = appData.saisiesCompteur.map(n => Number(n));
+                    } else {
+                        appData.saisiesCompteur = [];
+                    }
+                } catch(e){
+                    appData.saisiesCompteur = [];
+                }
+            }
+            if (appData.currentTab) {
+                showTab(appData.currentTab, false);
+            }
+            renderAll();
+        };
+
+        function saveData() {
+            localStorage.setItem('ranchSortingApp_v6', JSON.stringify(appData));
+            renderAll();
+        }
+
+        function showTab(tab, shouldSave = true) {
+            document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
+
+            const targetContent = document.getElementById('tab-' + tab);
+            const targetBtn = document.getElementById('tb-' + tab);
+
+            if (targetContent && targetBtn) {
+                targetContent.classList.add('active');
+                targetBtn.classList.add('active');
+            }
+
+            appData.currentTab = tab;
+            if (shouldSave) saveData();
+        }
+
+        // COMPTEUR CORRIGÉ
+        function pressKey(n) {
+            n = Number(n);
+            const index = appData.saisiesCompteur.indexOf(n);
+            if (index === -1) {
+                appData.saisiesCompteur.push(n);
+            } else {
+                appData.saisiesCompteur.splice(index, 1);
+            }
+            saveData();
+        }
+
+        function annulerDernier() {
+            appData.saisiesCompteur.pop();
+            saveData();
+        }
+
+        function reinitialiserCompteur() {
+            appData.saisiesCompteur = [];
+            saveData();
+        }
+
+        // VACHES
+        function toggleVacheFields() {
+            const val = document.getElementById('vache-type-id').value;
+            if (val === 'troupeau') {
+                document.getElementById('group-troupeau-fields').style.display = 'block';
+                document.getElementById('group-couleur-fields').style.display = 'none';
+            } else {
+                document.getElementById('group-troupeau-fields').style.display = 'none';
+                document.getElementById('group-couleur-fields').style.display = 'block';
+            }
+        }
+
+        function enregistrerVache() {
+            const type = document.getElementById('vache-type-id').value;
+            const prob = document.getElementById('v-probleme').value;
+
+            let groupName = "";
+            let numVache = "";
+
+            if (type === 'troupeau') {
+                const tr = document.getElementById('v-num-troupeau').value.trim();
+                numVache = document.getElementById('v-num-vache').value.trim();
+                if (!tr || !numVache) return alert("Veuillez remplir les numéros.");
+                groupName = "TROUPEAU NUM " + tr;
+            } else {
+                const cFond = document.getElementById('v-couleur-fond').value.trim();
+                const cNum = document.getElementById('v-couleur-numero').value.trim();
+                numVache = document.getElementById('v-num-vache-c').value.trim();
+                
+                if (!cFond || !numVache) return alert("Veuillez au moins indiquer la couleur du collier et le numéro.");
+                
+                if (cNum) {
+                    groupName = "COLLIER " + cFond.toUpperCase() + " (NUM " + cNum.toUpperCase() + ")";
+                } else {
+                    groupName = "COLLIER " + cFond.toUpperCase();
+                }
+            }
+
+            appData.vachesList.push({
+                id: Date.now(),
+                group: groupName,
+                num: numVache,
+                probleme: prob
+            });
+
+            document.getElementById('v-num-troupeau').value = "";
+            document.getElementById('v-num-vache').value = "";
+            document.getElementById('v-couleur-fond').value = "";
+            document.getElementById('v-couleur-numero').value = "";
+            document.getElementById('v-num-vache-c').value = "";
+            saveData();
+        }
+
+        function supprimerVache(id) {
+            appData.vachesList = appData.vachesList.filter(v => v.id !== id);
+            saveData();
+        }
+
+        // RÉSULTATS
+        function enregistrerResultat() {
+            const cav = document.getElementById('res-cavalier').value.trim();
+            const cls = document.getElementById('res-classe').value;
+            const g1v = parseInt(document.getElementById('g1-vaches').value) || 0;
+            const g1t = parseFloat(document.getElementById('g1-temps').value) || 0;
+            const g2v = parseInt(document.getElementById('g2-vaches').value) || 0;
+            const g2t = parseFloat(document.getElementById('g2-temps').value) || 0;
+
+            if (!cav) return alert("Veuillez entrer un cavalier / équipe.");
+
+            const totalV = g1v + g2v;
+            const totalT = (g1t + g2t).toFixed(2);
+
+            appData.scoresList.push({
+                id: Date.now(),
+                cavalier: cav,
+                classe: cls,
+                g1v: g1v, g1t: g1t,
+                g2v: g2v, g2t: g2t,
+                totV: totalV, totT: totalT
+            });
+
+            document.getElementById('res-cavalier').value = "";
+            document.getElementById('g1-vaches').value = "";
+            document.getElementById('g1-temps').value = "";
+            document.getElementById('g2-vaches').value = "";
+            document.getElementById('g2-temps').value = "";
+            saveData();
+        }
+
+        function supprimerScore(id) {
+            appData.scoresList = appData.scoresList.filter(s => s.id !== id);
+            saveData();
+        }
+
+        // RENDU VISUEL
+        function renderAll() {
+            // 1. Pavé Compteur
+            const allNums = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+            allNums.forEach(n => {
+                const btn = document.getElementById('k-' + n);
+                if (appData.saisiesCompteur.includes(n)) {
+                    btn.classList.add('disabled');
+                } else {
+                    btn.classList.remove('disabled');
+                }
+            });
+
+            const restants = allNums.filter(n => !appData.saisiesCompteur.includes(n));
+            document.getElementById('restants-list').innerText = restants.length > 0 ? restants.join(" ") : "AUCUN";
+
+            // 2. Vaches Notées (Groupées)
+            const vContainer = document.getElementById('vaches-display-list');
+            vContainer.innerHTML = "";
+
+            const groupedVaches = {};
+            appData.vachesList.forEach(v => {
+                if (!groupedVaches[v.group]) groupedVaches[v.group] = [];
+                groupedVaches[v.group].push(v);
+            });
+
+            for (let g in groupedVaches) {
+                let html = `<div class="group-banner">${g}</div>`;
+                groupedVaches[g].forEach(item => {
+                    html += `
+                        <div class="item-card">
+                            <div><strong>Vache Num ${item.num}</strong> - <span style="color:var(--accent);">${item.probleme}</span></div>
+                            <button class="btn-delete" onclick="supprimerVache(${item.id})">X</button>
+                        </div>`;
+                });
+                vContainer.innerHTML += html;
+            }
+
+            // 3. Scores (Groupés par Classe)
+            const sContainer = document.getElementById('scores-display-list');
+            sContainer.innerHTML = "";
+
+            const groupedScores = {};
+            appData.scoresList.forEach(s => {
+                if (!groupedScores[s.classe]) groupedScores[s.classe] = [];
+                groupedScores[s.classe].push(s);
+            });
+
+            for (let c in groupedScores) {
+                let html = `<div class="group-banner-yellow">CLASSE ${c}</div>`;
+                groupedScores[c].forEach(item => {
+                    html += `
+                        <div class="item-card">
+                            <div>
+                                <div><strong>${item.cavalier}</strong> <span class="badge-tag">${item.classe}</span></div>
+                                <div style="font-size:0.8rem; color:var(--text-dim); margin-top:3px;">
+                                    GO 1 : ${item.g1v} vaches (${item.g1t}s)<br>
+                                    GO 2 : ${item.g2v} vaches (${item.g2t}s)<br>
+                                    <strong style="color:#fff;">TOTAL : ${item.totV} vaches - ${item.totT} sec</strong>
+                                </div>
+                            </div>
+                            <button class="btn-delete" onclick="supprimerScore(${item.id})">X</button>
+                        </div>`;
+                });
+                sContainer.innerHTML += html;
+            }
+        }
+    </script>
+</body>
+</html>
+
+            
+            
+            
