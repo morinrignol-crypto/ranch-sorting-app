@@ -9,10 +9,14 @@
             --bg-color: #121212;
             --card-bg: #1e1e1e;
             --accent: #ffb300;
+            --accent-hover: #ffa000;
             --text: #ffffff;
             --text-dim: #b0b0b0;
             --danger: #cf6679;
+            --border: #333333;
         }
+
+        * { box-sizing: border-box; }
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -20,28 +24,26 @@
             color: var(--text);
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
             min-height: 100vh;
         }
 
-        /* Navigation Onglets */
+        /* Barre d'onglets */
         .tabs {
             display: flex;
-            background-color: #000;
+            background-color: #000000;
             border-bottom: 2px solid var(--accent);
             position: sticky;
             top: 0;
-            z-index: 10;
+            z-index: 100;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 15px 5px;
+            padding: 14px 5px;
             background: none;
             border: none;
             color: var(--text-dim);
-            font-size: 1rem;
+            font-size: 0.95rem;
             font-weight: bold;
             cursor: pointer;
             text-transform: uppercase;
@@ -55,58 +57,103 @@
         .tab-content {
             display: none;
             padding: 15px;
-            flex: 1;
+            max-width: 600px;
+            margin: 0 auto;
         }
 
         .tab-content.active {
             display: block;
         }
 
-        /* Elements communs */
+        /* Cartes & Éléments UI */
         .card {
             background-color: var(--card-bg);
             border-radius: 8px;
             padding: 15px;
             margin-bottom: 15px;
+            border: 1px solid var(--border);
         }
 
         h2 {
             margin-top: 0;
             color: var(--accent);
+            font-size: 1.2rem;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+            background: #2b2b2b;
+            color: var(--text);
+            border: 1px solid #444;
+            border-radius: 6px;
+            font-size: 1rem;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
         }
 
         button.btn-main {
             background-color: var(--accent);
             color: #000;
             border: none;
-            padding: 12px 20px;
+            padding: 14px;
             font-weight: bold;
-            border-radius: 5px;
+            border-radius: 6px;
             font-size: 1rem;
             cursor: pointer;
             width: 100%;
-            margin-top: 10px;
+            margin-top: 15px;
+        }
+
+        button.btn-main:active {
+            background-color: var(--accent-hover);
         }
 
         button.btn-danger {
             background-color: var(--danger);
             color: #fff;
             border: none;
-            padding: 8px 12px;
-            border-radius: 5px;
+            padding: 6px 10px;
+            border-radius: 4px;
             cursor: pointer;
+            font-weight: bold;
         }
 
-        /* Pavé Numérique (Compteur) */
-        .counter-display {
-            font-size: 3rem;
+        /* Onglet 1 : COMPTEUR */
+        .display-box {
+            background: #000;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            padding: 15px;
             text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .current-cow {
+            font-size: 3.5rem;
             font-weight: bold;
             color: var(--accent);
-            background: #000;
-            padding: 10px;
-            border-radius: 8px;
-            margin-bottom: 15px;
+            line-height: 1;
+        }
+
+        .sequence-list {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            margin-top: 10px;
+            min-height: 28px;
+            word-break: break-all;
         }
 
         .keypad {
@@ -117,10 +164,10 @@
 
         .key {
             background-color: var(--card-bg);
-            border: 1px solid #333;
+            border: 1px solid var(--border);
             color: var(--text);
-            font-size: 1.5rem;
-            padding: 20px;
+            font-size: 1.8rem;
+            padding: 18px 0;
             border-radius: 8px;
             cursor: pointer;
             font-weight: bold;
@@ -131,32 +178,39 @@
             color: #000;
         }
 
-        /* Formulaires & Listes */
-        input, select {
-            width: 100%;
-            padding: 10px;
-            margin: 8px 0;
-            box-sizing: border-box;
-            background: #2b2b2b;
-            color: var(--text);
-            border: 1px solid #444;
-            border-radius: 5px;
-            font-size: 1rem;
-        }
-
+        /* Onglets 2 & 3 : Listes */
         ul {
-            list-style-type: none;
+            list-style: none;
             padding: 0;
+            margin: 0;
         }
 
-        li {
+        li.item-row {
             background: #2b2b2b;
             margin-bottom: 8px;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 12px;
+            border-radius: 6px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            border-left: 4px solid var(--accent);
+        }
+
+        .item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .badge-class {
+            background: #333;
+            color: var(--accent);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: bold;
+            display: inline-block;
+            width: fit-content;
         }
     </style>
 </head>
@@ -164,190 +218,291 @@
 
     <!-- Barre d'onglets -->
     <nav class="tabs">
-        <button class="tab-btn active" onclick="showTab('compteur')">1. Compteur</button>
-        <button class="tab-btn" onclick="showTab('vaches')">2. Vaches</button>
-        <button class="tab-btn" onclick="showTab('resultats')">3. Résultats</button>
+        <button id="tab-btn-compteur" class="tab-btn active" onclick="switchTab('compteur')">1. COMPTEUR</button>
+        <button id="tab-btn-vaches" class="tab-btn" onclick="switchTab('vaches')">2. VACHES</button>
+        <button id="tab-btn-resultats" class="tab-btn" onclick="switchTab('resultats')">3. RÉSULTATS</button>
     </nav>
 
-    <!-- Onglet 1: COMPTEUR -->
-    <section id="compteur" class="tab-content active">
+    <!-- ONGLET 1 : COMPTEUR -->
+    <section id="tab-compteur" class="tab-content active">
         <div class="card">
-            <h2>Dernière Vache Triée</h2>
-            <div id="display-vache" class="counter-display">-</div>
+            <h2>Suivi du Tri en Direct</h2>
+            <div class="display-box">
+                <div id="current-cow-display" class="current-cow">-</div>
+                <div id="sequence-display" class="sequence-list">Séquence : aucune</div>
+            </div>
             
             <div class="keypad">
-                <button class="key" onclick="pressKey(1)">1</button>
-                <button class="key" onclick="pressKey(2)">2</button>
-                <button class="key" onclick="pressKey(3)">3</button>
-                <button class="key" onclick="pressKey(4)">4</button>
-                <button class="key" onclick="pressKey(5)">5</button>
-                <button class="key" onclick="pressKey(6)">6</button>
-                <button class="key" onclick="pressKey(7)">7</button>
-                <button class="key" onclick="pressKey(8)">8</button>
-                <button class="key" onclick="pressKey(9)">9</button>
-                <button class="key" onclick="pressKey(0)" style="grid-column: span 2;">0</button>
-                <button class="key" onclick="resetCompteur()" style="background: var(--danger); color: white;">C</button>
+                <button class="key" onclick="pressNumber(1)">1</button>
+                <button class="key" onclick="pressNumber(2)">2</button>
+                <button class="key" onclick="pressNumber(3)">3</button>
+                <button class="key" onclick="pressNumber(4)">4</button>
+                <button class="key" onclick="pressNumber(5)">5</button>
+                <button class="key" onclick="pressNumber(6)">6</button>
+                <button class="key" onclick="pressNumber(7)">7</button>
+                <button class="key" onclick="pressNumber(8)">8</button>
+                <button class="key" onclick="pressNumber(9)">9</button>
+                <button class="key" style="background:#333;" onclick="popLastNumber()">⌫</button>
+                <button class="key" onclick="pressNumber(0)">0</button>
+                <button class="key" style="background: var(--danger); color: white;" onclick="clearCompteur()">C</button>
             </div>
         </div>
     </section>
 
-    <!-- Onglet 2: VACHES -->
-    <section id="vaches" class="tab-content">
+    <!-- ONGLET 2 : VACHES -->
+    <section id="tab-vaches" class="tab-content">
         <div class="card">
             <h2>Signaler une Vache Difficile</h2>
-            <input type="number" id="vache-num" placeholder="N° de la vache (ex: 4)" min="0" max="9">
-            <select id="vache-probleme">
+            
+            <label>N° du Troupeau ou Couleur du Collier :</label>
+            <input type="text" id="vache-id-input" placeholder="Ex: Vache 7 / Collier Rouge">
+
+            <label>Type de Problème :</label>
+            <select id="vache-prob-input">
                 <option value="Lente / Refuse de passer">Lente / Refuse de passer</option>
                 <option value="Colérique / Charge">Colérique / Charge</option>
                 <option value="Sauteuse">Sauteuse</option>
                 <option value="Agressive">Agressive</option>
+                <option value="Collante au troupeau">Collante au troupeau</option>
                 <option value="Autre">Autre</option>
             </select>
+
             <button class="btn-main" onclick="ajouterVache()">Enregistrer Vache</button>
         </div>
 
         <div class="card">
-            <h2>Historique Vaches Remarquées</h2>
-            <ul id="liste-vaches"></ul>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h2>Vaches Notées</h2>
+                <button class="btn-danger" style="font-size: 0.8rem;" onclick="effacerToutesVaches()">Tout effacer</button>
+            </div>
+            <ul id="vaches-list"></ul>
         </div>
     </section>
 
-    <!-- Onglet 3: RÉSULTATS -->
-    <section id="resultats" class="tab-content">
+    <!-- ONGLET 3 : RÉSULTATS -->
+    <section id="tab-resultats" class="tab-content">
         <div class="card">
             <h2>Saisie Cavalier / Équipe</h2>
-            <input type="text" id="res-equipe" placeholder="Nom de l'équipe ou du cavalier">
+            
+            <label>Nom du Cavalier / Équipe :</label>
+            <input type="text" id="res-equipe" placeholder="Ex: Dupuis / Martin">
+
+            <label>Catégorie / Classe :</label>
             <select id="res-classe">
                 <option value="Open">Open</option>
-                <option value="Amateur">Amateur</option>
-                <option value="Club">Club</option>
-                <option value="Youth">Youth</option>
+                <option value="Inter Open">Inter Open</option>
+                <option value="Inter Limited">Inter Limited</option>
+                <option value="Limited">Limited</option>
+                <option value="Rookie">Rookie</option>
             </select>
-            <input type="number" id="res-vaches" placeholder="Nombre de vaches triées (0 à 10)">
-            <input type="text" id="res-temps" placeholder="Temps (ex: 58.42s)">
-            <button class="btn-main" onclick="ajouterResultat()">Enregistrer le passage</button>
+
+            <h3 style="color: var(--accent); margin-top: 15px; font-size: 1rem;">Go 1 (Manche 1)</h3>
+            <div class="grid-2">
+                <div>
+                    <label>Vaches :</label>
+                    <input type="number" id="go1-vaches" placeholder="0 à 10" min="0" max="10">
+                </div>
+                <div>
+                    <label>Temps (sec) :</label>
+                    <input type="text" id="go1-temps" placeholder="Ex: 58.42">
+                </div>
+            </div>
+
+            <h3 style="color: var(--accent); margin-top: 15px; font-size: 1rem;">Go 2 (Manche 2)</h3>
+            <div class="grid-2">
+                <div>
+                    <label>Vaches :</label>
+                    <input type="number" id="go2-vaches" placeholder="0 à 10" min="0" max="10">
+                </div>
+                <div>
+                    <label>Temps (sec) :</label>
+                    <input type="text" id="go2-temps" placeholder="Ex: 60.00">
+                </div>
+            </div>
+
+            <button class="btn-main" onclick="ajouterResultat()">Enregistrer le Passage</button>
         </div>
 
         <div class="card">
             <h2>Classement Provisoire</h2>
-            <ul id="liste-resultats"></ul>
+            <ul id="resultats-list"></ul>
         </div>
     </section>
 
     <script>
-        // --- DONNÉES & SAUVEGARDE AUTOMATIQUE ---
-        let appData = {
-            compteur: "-",
-            vaches: [],
-            resultats: []
+        // --- ÉTAT ET SAUVEGARDE DE L'APPLICATION ---
+        let appState = {
+            compteurSequence: [],
+            vachesNotees: [],
+            resultatsCavaliers: []
         };
 
-        // Charger les données sauvegardées au démarrage
+        // Chargement au démarrage
         window.onload = function() {
-            const savedData = localStorage.getItem('ranchSortingData');
+            const savedData = localStorage.getItem('ranchSortingApp_Data');
             if (savedData) {
-                appData = JSON.parse(savedData);
+                try {
+                    appState = JSON.parse(savedData);
+                } catch(e) {
+                    console.error("Erreur de chargement", e);
+                }
             }
             renderAll();
         };
 
-        // Sauvegarder dans localStorage
-        function saveData() {
-            localStorage.setItem('ranchSortingData', JSON.stringify(appData));
+        // Sauvegarde centralisée
+        function saveState() {
+            localStorage.setItem('ranchSortingApp_Data', JSON.stringify(appState));
             renderAll();
         }
 
-        // --- GESTION DES ONGLETS ---
-        function showTab(tabId) {
+        // --- NAVIGATION ONGLETS ---
+        function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById(tabId).classList.add('active');
-            event.target.classList.add('active');
+
+            document.getElementById('tab-' + tabName).classList.add('active');
+            document.getElementById('tab-btn-' + tabName).classList.add('active');
         }
 
-        // --- FONCTIONS ONGLET 1 (COMPTEUR) ---
-        function pressKey(val) {
-            appData.compteur = val;
-            saveData();
+        // --- ONGLET 1 : COMPTEUR ---
+        function pressNumber(num) {
+            appState.compteurSequence.push(num);
+            saveState();
         }
 
-        function resetCompteur() {
-            appData.compteur = "-";
-            saveData();
+        function popLastNumber() {
+            appState.compteurSequence.pop();
+            saveState();
         }
 
-        // --- FONCTIONS ONGLET 2 (VACHES) ---
+        function clearCompteur() {
+            appState.compteurSequence = [];
+            saveState();
+        }
+
+        // --- ONGLET 2 : VACHES ---
         function ajouterVache() {
-            const num = document.getElementById('vache-num').value;
-            const prob = document.getElementById('vache-probleme').value;
+            const idInput = document.getElementById('vache-id-input');
+            const probInput = document.getElementById('vache-prob-input');
 
-            if (num === "") return alert("Veuillez indiquer un numéro de vache.");
+            if (!idInput.value.trim()) {
+                alert("Veuillez indiquer un numéro de vache ou un collier.");
+                return;
+            }
 
-            appData.vaches.push({ num: num, prob: prob, id: Date.now() });
-            document.getElementById('vache-num').value = "";
-            saveData();
+            appState.vachesNotees.push({
+                id: Date.now(),
+                vache: idInput.value.trim(),
+                probleme: probInput.value
+            });
+
+            idInput.value = "";
+            saveState();
         }
 
         function supprimerVache(id) {
-            appData.vaches = appData.vaches.filter(item => item.id !== id);
-            saveData();
+            appState.vachesNotees = appState.vachesNotees.filter(v => v.id !== id);
+            saveState();
         }
 
-        // --- FONCTIONS ONGLET 3 (RÉSULTATS) ---
+        function effacerToutesVaches() {
+            if (confirm("Effacer toutes les vaches notées ?")) {
+                appState.vachesNotees = [];
+                saveState();
+            }
+        }
+
+        // --- ONGLET 3 : RÉSULTATS ---
         function ajouterResultat() {
-            const equipe = document.getElementById('res-equipe').value;
+            const equipe = document.getElementById('res-equipe').value.trim();
             const classe = document.getElementById('res-classe').value;
-            const vaches = document.getElementById('res-vaches').value;
-            const temps = document.getElementById('res-temps').value;
+            const go1Vaches = document.getElementById('go1-vaches').value || 0;
+            const go1Temps = document.getElementById('go1-temps').value || "-";
+            const go2Vaches = document.getElementById('go2-vaches').value || 0;
+            const go2Temps = document.getElementById('go2-temps').value || "-";
 
-            if (!equipe) return alert("Veuillez entrer un nom d'équipe ou de cavalier.");
+            if (!equipe) {
+                alert("Veuillez saisir un nom de cavalier ou d'équipe.");
+                return;
+            }
 
-            appData.resultats.push({
+            appState.resultatsCavaliers.push({
+                id: Date.now(),
                 equipe: equipe,
                 classe: classe,
-                vaches: vaches || 0,
-                temps: temps || "-",
-                id: Date.now()
+                go1: { vaches: go1Vaches, temps: go1Temps },
+                go2: { vaches: go2Vaches, temps: go2Temps }
             });
 
             document.getElementById('res-equipe').value = "";
-            document.getElementById('res-vaches').value = "";
-            document.getElementById('res-temps').value = "";
-            saveData();
+            document.getElementById('go1-vaches').value = "";
+            document.getElementById('go1-temps').value = "";
+            document.getElementById('go2-vaches').value = "";
+            document.getElementById('go2-temps').value = "";
+            saveState();
         }
 
         function supprimerResultat(id) {
-            appData.resultats = appData.resultats.filter(item => item.id !== id);
-            saveData();
+            appState.resultatsCavaliers = appState.resultatsCavaliers.filter(r => r.id !== id);
+            saveState();
         }
 
-        // --- MISE À JOUR DE L'AFFICHAGE ---
+        // --- AFFICHAGE / RENDU ---
         function renderAll() {
-            // 1. Compteur
-            document.getElementById('display-vache').innerText = appData.compteur;
+            // 1. Rendus Compteur
+            const seq = appState.compteurSequence;
+            const currentDisplay = document.getElementById('current-cow-display');
+            const seqDisplay = document.getElementById('sequence-display');
 
-            // 2. Vaches
-            const listeVaches = document.getElementById('liste-vaches');
-            listeVaches.innerHTML = "";
-            appData.vaches.forEach(v => {
-                listeVaches.innerHTML += `
-                    <li>
-                        <span><strong>Vache N°${v.num}</strong> : ${v.prob}</span>
-                        <button class="btn-danger" onclick="supprimerVache(${v.id})">X</button>
-                    </li>`;
-            });
+            if (seq.length > 0) {
+                currentDisplay.innerText = seq[seq.length - 1];
+                seqDisplay.innerText = "Séquence : " + seq.join(" - ");
+            } else {
+                currentDisplay.innerText = "-";
+                seqDisplay.innerText = "Séquence : aucune";
+            }
 
-            // 3. Résultats
-            const listeRes = document.getElementById('liste-resultats');
-            listeRes.innerHTML = "";
-            appData.resultats.forEach(r => {
-                listeRes.innerHTML += `
-                    <li>
-                        <span><strong>${r.equipe}</strong> (${r.classe}) — <strong>${r.vaches} vaches</strong> en ${r.temps}</span>
-                        <button class="btn-danger" onclick="supprimerResultat(${r.id})">X</button>
-                    </li>`;
-            });
+            // 2. Rendus Vaches
+            const vachesList = document.getElementById('vaches-list');
+            vachesList.innerHTML = "";
+            if (appState.vachesNotees.length === 0) {
+                vachesList.innerHTML = `<li style="color:var(--text-dim); padding:10px;">Aucune vache notée.</li>`;
+            } else {
+                appState.vachesNotees.forEach(v => {
+                    vachesList.innerHTML += `
+                        <li class="item-row">
+                            <div class="item-info">
+                                <strong>${v.vache}</strong>
+                                <span style="color: var(--text-dim); font-size: 0.9rem;">${v.probleme}</span>
+                            </div>
+                            <button class="btn-danger" onclick="supprimerVache(${v.id})">X</button>
+                        </li>`;
+                });
+            }
+
+            // 3. Rendus Résultats
+            const resList = document.getElementById('resultats-list');
+            resList.innerHTML = "";
+            if (appState.resultatsCavaliers.length === 0) {
+                resList.innerHTML = `<li style="color:var(--text-dim); padding:10px;">Aucun résultat enregistré.</li>`;
+            } else {
+                appState.resultatsCavaliers.forEach(r => {
+                    resList.innerHTML += `
+                        <li class="item-row">
+                            <div class="item-info">
+                                <div>
+                                    <span class="badge-class">${r.classe}</span>
+                                    <strong style="margin-left: 5px;">${r.equipe}</strong>
+                                </div>
+                                <div style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">
+                                    Go 1: ${r.go1.vaches} v. (${r.go1.temps}s) | Go 2: ${r.go2.vaches} v. (${r.go2.temps}s)
+                                </div>
+                            </div>
+                            <button class="btn-danger" onclick="supprimerResultat(${r.id})">X</button>
+                        </li>`;
+                });
+            }
         }
     </script>
 </body>
