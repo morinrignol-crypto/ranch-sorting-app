@@ -9,7 +9,6 @@
             --bg-color: #121212;
             --card-bg: #1e1e1e;
             --accent: #ffb300;
-            --accent-hover: #ffa000;
             --text: #ffffff;
             --text-dim: #b0b0b0;
             --danger: #cf6679;
@@ -27,10 +26,10 @@
             min-height: 100vh;
         }
 
-        /* Barre d'onglets */
+        /* Navigation Onglets */
         .tabs {
             display: flex;
-            background-color: #000000;
+            background-color: #000;
             border-bottom: 2px solid var(--accent);
             position: sticky;
             top: 0;
@@ -65,7 +64,7 @@
             display: block;
         }
 
-        /* Cartes & Éléments UI */
+        /* Cards */
         .card {
             background-color: var(--card-bg);
             border-radius: 8px;
@@ -117,10 +116,6 @@
             margin-top: 15px;
         }
 
-        button.btn-main:active {
-            background-color: var(--accent-hover);
-        }
-
         button.btn-danger {
             background-color: var(--danger);
             color: #fff;
@@ -131,7 +126,7 @@
             font-weight: bold;
         }
 
-        /* Onglet 1 : COMPTEUR */
+        /* Affichage Pavé */
         .display-box {
             background: #000;
             border: 1px solid var(--accent);
@@ -142,18 +137,19 @@
         }
 
         .current-cow {
-            font-size: 3.5rem;
+            font-size: 3.8rem;
             font-weight: bold;
             color: var(--accent);
             line-height: 1;
         }
 
         .sequence-list {
-            font-size: 1.2rem;
-            color: var(--text-dim);
+            font-size: 1.1rem;
+            color: var(--text);
             margin-top: 10px;
-            min-height: 28px;
+            min-height: 24px;
             word-break: break-all;
+            letter-spacing: 2px;
         }
 
         .keypad {
@@ -178,7 +174,7 @@
             color: #000;
         }
 
-        /* Onglets 2 & 3 : Listes */
+        /* Listes */
         ul {
             list-style: none;
             padding: 0;
@@ -196,12 +192,6 @@
             border-left: 4px solid var(--accent);
         }
 
-        .item-info {
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-        }
-
         .badge-class {
             background: #333;
             color: var(--accent);
@@ -209,8 +199,6 @@
             border-radius: 4px;
             font-size: 0.75rem;
             font-weight: bold;
-            display: inline-block;
-            width: fit-content;
         }
     </style>
 </head>
@@ -226,7 +214,7 @@
     <!-- ONGLET 1 : COMPTEUR -->
     <section id="tab-compteur" class="tab-content active">
         <div class="card">
-            <h2>Suivi du Tri en Direct</h2>
+            <h2>Compteur de Tri</h2>
             <div class="display-box">
                 <div id="current-cow-display" class="current-cow">-</div>
                 <div id="sequence-display" class="sequence-list">Séquence : aucune</div>
@@ -242,9 +230,9 @@
                 <button class="key" onclick="pressNumber(7)">7</button>
                 <button class="key" onclick="pressNumber(8)">8</button>
                 <button class="key" onclick="pressNumber(9)">9</button>
-                <button class="key" style="background:#333;" onclick="popLastNumber()">⌫</button>
+                <button class="key" style="background: #333;" onclick="removeLastNumber()" title="Annuler la dernière vache">⌫</button>
                 <button class="key" onclick="pressNumber(0)">0</button>
-                <button class="key" style="background: var(--danger); color: white;" onclick="clearCompteur()">C</button>
+                <button class="key" style="background: var(--danger); color: white;" onclick="clearCompteur()" title="Réinitialiser la manche">C</button>
             </div>
         </div>
     </section>
@@ -254,8 +242,8 @@
         <div class="card">
             <h2>Signaler une Vache Difficile</h2>
             
-            <label>N° du Troupeau ou Couleur du Collier :</label>
-            <input type="text" id="vache-id-input" placeholder="Ex: Vache 7 / Collier Rouge">
+            <label>N° de la vache ou Couleur du collier :</label>
+            <input type="text" id="vache-id-input" placeholder="Ex: 4 / Collier Rouge">
 
             <label>Type de Problème :</label>
             <select id="vache-prob-input">
@@ -272,7 +260,7 @@
 
         <div class="card">
             <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h2>Vaches Notées</h2>
+                <h2>Historique Vaches Remarquées</h2>
                 <button class="btn-danger" style="font-size: 0.8rem;" onclick="effacerToutesVaches()">Tout effacer</button>
             </div>
             <ul id="vaches-list"></ul>
@@ -285,7 +273,7 @@
             <h2>Saisie Cavalier / Équipe</h2>
             
             <label>Nom du Cavalier / Équipe :</label>
-            <input type="text" id="res-equipe" placeholder="Ex: Dupuis / Martin">
+            <input type="text" id="res-equipe" placeholder="Nom de l'équipe ou du cavalier">
 
             <label>Catégorie / Classe :</label>
             <select id="res-classe">
@@ -299,28 +287,28 @@
             <h3 style="color: var(--accent); margin-top: 15px; font-size: 1rem;">Go 1 (Manche 1)</h3>
             <div class="grid-2">
                 <div>
-                    <label>Vaches :</label>
+                    <label>Vaches triées :</label>
                     <input type="number" id="go1-vaches" placeholder="0 à 10" min="0" max="10">
                 </div>
                 <div>
                     <label>Temps (sec) :</label>
-                    <input type="text" id="go1-temps" placeholder="Ex: 58.42">
+                    <input type="text" id="go1-temps" placeholder="Ex: 58.42s">
                 </div>
             </div>
 
             <h3 style="color: var(--accent); margin-top: 15px; font-size: 1rem;">Go 2 (Manche 2)</h3>
             <div class="grid-2">
                 <div>
-                    <label>Vaches :</label>
+                    <label>Vaches triées :</label>
                     <input type="number" id="go2-vaches" placeholder="0 à 10" min="0" max="10">
                 </div>
                 <div>
                     <label>Temps (sec) :</label>
-                    <input type="text" id="go2-temps" placeholder="Ex: 60.00">
+                    <input type="text" id="go2-temps" placeholder="Ex: 60.00s">
                 </div>
             </div>
 
-            <button class="btn-main" onclick="ajouterResultat()">Enregistrer le Passage</button>
+            <button class="btn-main" onclick="ajouterResultat()">Enregistrer le passage</button>
         </div>
 
         <div class="card">
@@ -330,33 +318,33 @@
     </section>
 
     <script>
-        // --- ÉTAT ET SAUVEGARDE DE L'APPLICATION ---
+        // --- ÉTAT DU COMPTEUR ET DONNÉES ---
         let appState = {
             compteurSequence: [],
             vachesNotees: [],
             resultatsCavaliers: []
         };
 
-        // Chargement au démarrage
+        // Charger au démarrage
         window.onload = function() {
             const savedData = localStorage.getItem('ranchSortingApp_Data');
             if (savedData) {
                 try {
                     appState = JSON.parse(savedData);
                 } catch(e) {
-                    console.error("Erreur de chargement", e);
+                    console.error("Erreur au chargement des données", e);
                 }
             }
             renderAll();
         };
 
-        // Sauvegarde centralisée
+        // Sauvegarder dans le navigateur
         function saveState() {
             localStorage.setItem('ranchSortingApp_Data', JSON.stringify(appState));
             renderAll();
         }
 
-        // --- NAVIGATION ONGLETS ---
+        // --- GESTION DES ONGLETS ---
         function switchTab(tabName) {
             document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
             document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
@@ -365,15 +353,17 @@
             document.getElementById('tab-btn-' + tabName).classList.add('active');
         }
 
-        // --- ONGLET 1 : COMPTEUR ---
+        // --- ONGLET 1 : PA VÉ COMPTEUR (AJOUT / ANNULATION / EFFACEMENT) ---
         function pressNumber(num) {
             appState.compteurSequence.push(num);
             saveState();
         }
 
-        function popLastNumber() {
-            appState.compteurSequence.pop();
-            saveState();
+        function removeLastNumber() {
+            if (appState.compteurSequence.length > 0) {
+                appState.compteurSequence.pop();
+                saveState();
+            }
         }
 
         function clearCompteur() {
@@ -407,7 +397,7 @@
         }
 
         function effacerToutesVaches() {
-            if (confirm("Effacer toutes les vaches notées ?")) {
+            if (confirm("Effacer tout l'historique des vaches ?")) {
                 appState.vachesNotees = [];
                 saveState();
             }
@@ -448,9 +438,9 @@
             saveState();
         }
 
-        // --- AFFICHAGE / RENDU ---
+        // --- RENDU DYNAMIQUE DE L'INTERFACE ---
         function renderAll() {
-            // 1. Rendus Compteur
+            // 1. Pavé Numérique & Séquence
             const seq = appState.compteurSequence;
             const currentDisplay = document.getElementById('current-cow-display');
             const seqDisplay = document.getElementById('sequence-display');
@@ -463,7 +453,7 @@
                 seqDisplay.innerText = "Séquence : aucune";
             }
 
-            // 2. Rendus Vaches
+            // 2. Vaches Notées
             const vachesList = document.getElementById('vaches-list');
             vachesList.innerHTML = "";
             if (appState.vachesNotees.length === 0) {
@@ -472,8 +462,8 @@
                 appState.vachesNotees.forEach(v => {
                     vachesList.innerHTML += `
                         <li class="item-row">
-                            <div class="item-info">
-                                <strong>${v.vache}</strong>
+                            <div>
+                                <strong>Vache N° ${v.vache}</strong><br>
                                 <span style="color: var(--text-dim); font-size: 0.9rem;">${v.probleme}</span>
                             </div>
                             <button class="btn-danger" onclick="supprimerVache(${v.id})">X</button>
@@ -481,7 +471,7 @@
                 });
             }
 
-            // 3. Rendus Résultats
+            // 3. Résultats Cavaliers
             const resList = document.getElementById('resultats-list');
             resList.innerHTML = "";
             if (appState.resultatsCavaliers.length === 0) {
@@ -490,13 +480,13 @@
                 appState.resultatsCavaliers.forEach(r => {
                     resList.innerHTML += `
                         <li class="item-row">
-                            <div class="item-info">
+                            <div>
                                 <div>
                                     <span class="badge-class">${r.classe}</span>
                                     <strong style="margin-left: 5px;">${r.equipe}</strong>
                                 </div>
                                 <div style="font-size: 0.85rem; color: var(--text-dim); margin-top: 4px;">
-                                    Go 1: ${r.go1.vaches} v. (${r.go1.temps}s) | Go 2: ${r.go2.vaches} v. (${r.go2.temps}s)
+                                    Go 1: ${r.go1.vaches} v. (${r.go1.temps}) | Go 2: ${r.go2.vaches} v. (${r.go2.temps})
                                 </div>
                             </div>
                             <button class="btn-danger" onclick="supprimerResultat(${r.id})">X</button>
