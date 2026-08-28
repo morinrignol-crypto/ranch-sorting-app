@@ -2,30 +2,22 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ranch Sorting Compteur</title>
     <style>
         :root {
-            --amber: #e0a843;
-            --amber-dark: #b88328;
-            --bg: #121212;
+            --bg-color: #121212;
             --card-bg: #1e1e1e;
-            --disabled: #3a3a3a;
-            --text-disabled: #666666;
-            --danger: #d9534f;
-        }
-
-        * {
-            box-sizing: border-box;
-            user-select: none;
-            -webkit-user-select: none;
-            touch-action: manipulation;
+            --accent: #ffb300;
+            --text: #ffffff;
+            --text-dim: #b0b0b0;
+            --danger: #cf6679;
         }
 
         body {
-            background-color: var(--bg);
-            color: #ffffff;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
             margin: 0;
             padding: 0;
             display: flex;
@@ -33,706 +25,330 @@
             min-height: 100vh;
         }
 
-        .nav-tabs {
+        /* Navigation Onglets */
+        .tabs {
             display: flex;
-            background-color: #000000;
-            border-bottom: 2px solid var(--amber);
+            background-color: #000;
+            border-bottom: 2px solid var(--accent);
             position: sticky;
             top: 0;
-            z-index: 100;
+            z-index: 10;
         }
 
         .tab-btn {
             flex: 1;
-            padding: 12px 4px;
+            padding: 15px 5px;
             background: none;
             border: none;
-            color: #888888;
-            font-size: 0.9rem;
-            font-weight: 800;
-            text-transform: uppercase;
+            color: var(--text-dim);
+            font-size: 1rem;
+            font-weight: bold;
             cursor: pointer;
-            text-align: center;
+            text-transform: uppercase;
         }
 
         .tab-btn.active {
-            color: var(--amber);
-            background-color: var(--card-bg);
-            border-bottom: 4px solid var(--amber);
+            color: var(--accent);
+            border-bottom: 3px solid var(--accent);
         }
 
-        .page {
+        .tab-content {
             display: none;
-            padding: 10px 12px;
-            flex-direction: column;
-            align-items: center;
+            padding: 15px;
+            flex: 1;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Elements communs */
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+
+        h2 {
+            margin-top: 0;
+            color: var(--accent);
+        }
+
+        button.btn-main {
+            background-color: var(--accent);
+            color: #000;
+            border: none;
+            padding: 12px 20px;
+            font-weight: bold;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
             width: 100%;
-            max-width: 500px;
-            margin: 0 auto;
+            margin-top: 10px;
         }
 
-        .page.active {
-            display: flex;
+        button.btn-danger {
+            background-color: var(--danger);
+            color: #fff;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 5px;
+            cursor: pointer;
         }
 
-        .keypad-container {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            margin-top: 4px;
+        /* Pavé Numérique (Compteur) */
+        .counter-display {
+            font-size: 3rem;
+            text-align: center;
+            font-weight: bold;
+            color: var(--accent);
+            background: #000;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 15px;
         }
 
-        .grid {
+        .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            width: 100%;
-        }
-
-        .btn-num {
-            background-color: var(--amber);
-            color: #121212;
-            border: none;
-            border-radius: 12px;
-            height: 70px;
-            font-size: 2.6rem;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-            cursor: pointer;
-        }
-
-        .btn-num:active {
-            transform: scale(0.95);
-            background-color: var(--amber-dark);
-        }
-
-        .btn-num.used {
-            background-color: var(--disabled);
-            color: var(--text-disabled);
-            box-shadow: none;
-        }
-
-        .btn-zero {
-            width: 100%;
-            background-color: var(--amber);
-            color: #121212;
-            border: none;
-            border-radius: 12px;
-            height: 60px;
-            font-size: 2.6rem;
-            font-weight: 900;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.4);
-            cursor: pointer;
-        }
-
-        .btn-zero.used {
-            background-color: var(--disabled);
-            color: var(--text-disabled);
-            box-shadow: none;
-        }
-
-        .display-section {
-            width: 100%;
-            background-color: var(--card-bg);
-            border-radius: 12px;
-            padding: 8px;
-            margin: 10px 0 8px 0;
-            text-align: center;
-            border: 1px solid #333;
-        }
-
-        .display-title {
-            font-size: 0.85rem;
-            font-weight: 800;
-            letter-spacing: 1px;
-            color: #aaaaaa;
-            margin-bottom: 2px;
-        }
-
-        .display-numbers {
-            font-size: 2.2rem;
-            font-weight: 900;
-            color: var(--amber);
-            letter-spacing: 3px;
-            line-height: 1.1;
-            min-height: 40px;
-        }
-
-        .controls {
-            display: flex;
             gap: 10px;
-            width: 100%;
         }
 
-        .btn-ctrl {
-            flex: 1;
-            background-color: var(--amber);
-            color: #121212;
-            border: none;
-            border-radius: 10px;
-            padding: 12px 0;
-            font-size: 1.1rem;
-            font-weight: 900;
-            cursor: pointer;
-        }
-
-        .form-card {
-            width: 100%;
+        .key {
             background-color: var(--card-bg);
-            border-radius: 16px;
-            padding: 16px;
             border: 1px solid #333;
-            margin-bottom: 16px;
-        }
-
-        .form-title {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: var(--amber);
-            text-align: center;
-            margin-bottom: 14px;
-            text-transform: uppercase;
-        }
-
-        .section-subtitle {
-            font-size: 1rem;
-            font-weight: 800;
-            color: var(--amber);
-            margin: 12px 0 6px 0;
-            border-bottom: 1px solid #333;
-            padding-bottom: 4px;
-        }
-
-        .class-group-header {
-            font-size: 1.1rem;
-            font-weight: 900;
-            color: #121212;
-            background-color: var(--amber);
-            padding: 8px 12px;
+            color: var(--text);
+            font-size: 1.5rem;
+            padding: 20px;
             border-radius: 8px;
-            margin: 16px 0 8px 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            width: 100%;
-        }
-
-        .herd-group-header {
-            font-size: 1.1rem;
-            font-weight: 900;
-            color: #ffffff;
-            background-color: var(--danger);
-            padding: 8px 12px;
-            border-radius: 8px;
-            margin: 16px 0 8px 0;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            width: 100%;
-        }
-
-        .field-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            margin-bottom: 10px;
-        }
-
-        .field-group label {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: #ccc;
-        }
-
-        select, input {
-            background-color: #2a2a2a;
-            color: #fff;
-            border: 1px solid #444;
-            border-radius: 10px;
-            padding: 12px;
-            font-size: 1.05rem;
+            cursor: pointer;
             font-weight: bold;
+        }
+
+        .key:active {
+            background-color: var(--accent);
+            color: #000;
+        }
+
+        /* Formulaires & Listes */
+        input, select {
             width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            background: #2b2b2b;
+            color: var(--text);
+            border: 1px solid #444;
+            border-radius: 5px;
+            font-size: 1rem;
         }
 
-        .row-2 {
-            display: flex;
-            gap: 10px;
+        ul {
+            list-style-type: none;
+            padding: 0;
         }
 
-        .row-2 .field-group { flex: 1; }
-
-        .btn-save {
-            background-color: var(--amber);
-            color: #121212;
-            border: none;
-            border-radius: 12px;
-            padding: 16px;
-            font-size: 1.2rem;
-            font-weight: 900;
-            width: 100%;
-            cursor: pointer;
-            margin-top: 8px;
-        }
-
-        .list-container {
-            width: 100%;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .item-card {
-            background-color: var(--card-bg);
-            border: 1px solid #333;
-            border-left: 6px solid var(--amber);
-            border-radius: 12px;
-            padding: 14px;
+        li {
+            background: #2b2b2b;
+            margin-bottom: 8px;
+            padding: 10px;
+            border-radius: 5px;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        .item-info {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            width: 85%;
-        }
-
-        .item-title {
-            font-size: 1.2rem;
-            font-weight: 800;
-            color: #fff;
-        }
-
-        .item-badge {
-            display: inline-block;
-            background-color: #333;
-            color: var(--amber);
-            border: 1px solid var(--amber);
-            padding: 2px 8px;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 900;
-            width: fit-content;
-        }
-
-        .item-detail {
-            font-size: 0.95rem;
-            color: #bbb;
-            line-height: 1.4;
-        }
-
-        .item-total {
-            font-size: 1rem;
-            font-weight: 800;
-            color: var(--amber);
-            margin-top: 4px;
-        }
-
-        .btn-del {
-            background: none;
-            border: none;
-            color: #ff5555;
-            font-size: 1.6rem;
-            font-weight: bold;
-            padding: 4px 8px;
-            cursor: pointer;
+            align-items: center;
         }
     </style>
 </head>
 <body>
 
-    <div class="nav-tabs">
-        <button class="tab-btn active" onclick="switchTab('p1', this)">1. COMPTEUR</button>
-        <button class="tab-btn" onclick="switchTab('p2', this)">2. VACHES</button>
-        <button class="tab-btn" onclick="switchTab('p3', this)">3. RESULTATS</button>
-    </div>
+    <!-- Barre d'onglets -->
+    <nav class="tabs">
+        <button class="tab-btn active" onclick="showTab('compteur')">1. Compteur</button>
+        <button class="tab-btn" onclick="showTab('vaches')">2. Vaches</button>
+        <button class="tab-btn" onclick="showTab('resultats')">3. Résultats</button>
+    </nav>
 
-    <!-- PAGE 1 : COMPTEUR (HETEUR ET ESPACEMENT RÉDUITS) -->
-    <div id="p1" class="page active">
-        <div class="keypad-container">
-            <div class="grid" id="grid-1-9"></div>
-            <div id="zero-container"></div>
+    <!-- Onglet 1: COMPTEUR -->
+    <section id="compteur" class="tab-content active">
+        <div class="card">
+            <h2>Dernière Vache Triée</h2>
+            <div id="display-vache" class="counter-display">-</div>
+            
+            <div class="keypad">
+                <button class="key" onclick="pressKey(1)">1</button>
+                <button class="key" onclick="pressKey(2)">2</button>
+                <button class="key" onclick="pressKey(3)">3</button>
+                <button class="key" onclick="pressKey(4)">4</button>
+                <button class="key" onclick="pressKey(5)">5</button>
+                <button class="key" onclick="pressKey(6)">6</button>
+                <button class="key" onclick="pressKey(7)">7</button>
+                <button class="key" onclick="pressKey(8)">8</button>
+                <button class="key" onclick="pressKey(9)">9</button>
+                <button class="key" onclick="pressKey(0)" style="grid-column: span 2;">0</button>
+                <button class="key" onclick="resetCompteur()" style="background: var(--danger); color: white;">C</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Onglet 2: VACHES -->
+    <section id="vaches" class="tab-content">
+        <div class="card">
+            <h2>Signaler une Vache Difficile</h2>
+            <input type="number" id="vache-num" placeholder="N° de la vache (ex: 4)" min="0" max="9">
+            <select id="vache-probleme">
+                <option value="Lente / Refuse de passer">Lente / Refuse de passer</option>
+                <option value="Colérique / Charge">Colérique / Charge</option>
+                <option value="Sauteuse">Sauteuse</option>
+                <option value="Agressive">Agressive</option>
+                <option value="Autre">Autre</option>
+            </select>
+            <button class="btn-main" onclick="ajouterVache()">Enregistrer Vache</button>
         </div>
 
-        <div class="display-section">
-            <div class="display-title">NUMEROS RESTANTS :</div>
-            <div class="display-numbers" id="remaining-display">0 1 2 3 4 5 6 7 8 9</div>
+        <div class="card">
+            <h2>Historique Vaches Remarquées</h2>
+            <ul id="liste-vaches"></ul>
+        </div>
+    </section>
+
+    <!-- Onglet 3: RÉSULTATS -->
+    <section id="resultats" class="tab-content">
+        <div class="card">
+            <h2>Saisie Cavalier / Équipe</h2>
+            <input type="text" id="res-equipe" placeholder="Nom de l'équipe ou du cavalier">
+            <select id="res-classe">
+                <option value="Open">Open</option>
+                <option value="Amateur">Amateur</option>
+                <option value="Club">Club</option>
+                <option value="Youth">Youth</option>
+            </select>
+            <input type="number" id="res-vaches" placeholder="Nombre de vaches triées (0 à 10)">
+            <input type="text" id="res-temps" placeholder="Temps (ex: 58.42s)">
+            <button class="btn-main" onclick="ajouterResultat()">Enregistrer le passage</button>
         </div>
 
-        <div class="controls">
-            <button class="btn-ctrl" onclick="undo()">ANNULER</button>
-            <button class="btn-ctrl" onclick="resetKeypad()">REINITIALISER</button>
+        <div class="card">
+            <h2>Classement Provisoire</h2>
+            <ul id="liste-resultats"></ul>
         </div>
-    </div>
-
-    <!-- PAGE 2 : VACHES DIFFICILES -->
-    <div id="p2" class="page">
-        <div class="form-card">
-            <div class="form-title" style="color:var(--danger)">SIGNALER UNE VACHE</div>
-
-            <div class="field-group" style="margin-bottom:14px;">
-                <label>Type d'identification du concours</label>
-                <select id="identification-mode" onchange="toggleCowFormMode()">
-                    <option value="herd">Par Numero de Troupeau</option>
-                    <option value="collar">Par Couleur de Collier</option>
-                </select>
-            </div>
-
-            <!-- FORMULAIRE TROUPEAU -->
-            <div id="form-mode-herd">
-                <div class="field-group">
-                    <label>Num Troupeau</label>
-                    <input type="number" id="herd-num" placeholder="Ex: 1" min="1" max="99">
-                </div>
-            </div>
-
-            <!-- FORMULAIRE COLLIER -->
-            <div id="form-mode-collar" style="display:none;">
-                <div class="row-2">
-                    <div class="field-group">
-                        <label>Fond collier</label>
-                        <select id="col-fond">
-                            <option value="Bleu">Bleu</option>
-                            <option value="Blanc">Blanc</option>
-                            <option value="Vert">Vert</option>
-                            <option value="Rouge">Rouge</option>
-                            <option value="Noir">Noir</option>
-                            <option value="Jaune">Jaune</option>
-                        </select>
-                    </div>
-                    <div class="field-group">
-                        <label>Couleur Numero</label>
-                        <select id="col-num">
-                            <option value="Blanc">Blanc</option>
-                            <option value="Noir">Noir</option>
-                            <option value="Bleu">Bleu</option>
-                            <option value="Rouge">Rouge</option>
-                            <option value="Vert">Vert</option>
-                            <option value="Jaune">Jaune</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row-2">
-                <div class="field-group">
-                    <label>Num Vache</label>
-                    <input type="number" id="cow-num" placeholder="Ex: 7" min="0" max="99">
-                </div>
-                <div class="field-group">
-                    <label>Probleme</label>
-                    <select id="cow-reason">
-                        <option value="Charge">Charge</option>
-                        <option value="Lente / Colle">Lente / Colle</option>
-                        <option value="Compliquee">Compliquee</option>
-                    </select>
-                </div>
-            </div>
-
-            <button class="btn-save" style="background-color:var(--danger); color:white;" onclick="saveBadCow()">ENREGISTRER LA VACHE</button>
-        </div>
-
-        <div class="list-container" id="bad-cow-list"></div>
-    </div>
-
-    <!-- PAGE 3 : RESULTATS -->
-    <div id="p3" class="page">
-        <div class="form-card">
-            <div class="form-title">ENREGISTRER UN SCORE</div>
-
-            <div class="row-2">
-                <div class="field-group" style="flex: 1.4;">
-                    <label>Cavalier / Equipe</label>
-                    <input type="text" id="rider-name" placeholder="Ex: Jean / Equipe 12">
-                </div>
-                <div class="field-group" style="flex: 1.1;">
-                    <label>Classe</label>
-                    <select id="class-type">
-                        <option value="Rookie">Rookie</option>
-                        <option value="LTD">LTD</option>
-                        <option value="INT LTD">INT LTD</option>
-                        <option value="INT OPEN">INT OPEN</option>
-                        <option value="OPEN">OPEN</option>
-                    </select>
-                </div>
-            </div>
-
-            <div class="section-subtitle">GO 1</div>
-            <div class="row-2">
-                <div class="field-group">
-                    <label>Vaches triees</label>
-                    <input type="number" id="g1-cows" placeholder="Ex: 10" min="0" max="10">
-                </div>
-                <div class="field-group">
-                    <label>Temps (en sec)</label>
-                    <input type="number" step="0.01" id="g1-time" placeholder="Ex: 45.30">
-                </div>
-            </div>
-
-            <div class="section-subtitle">GO 2</div>
-            <div class="row-2">
-                <div class="field-group">
-                    <label>Vaches triees</label>
-                    <input type="number" id="g2-cows" placeholder="Ex: 10" min="0" max="10">
-                </div>
-                <div class="field-group">
-                    <label>Temps (en sec)</label>
-                    <input type="number" step="0.01" id="g2-time" placeholder="Ex: 38.90">
-                </div>
-            </div>
-
-            <button class="btn-save" onclick="saveResult()">ENREGISTRER LE RESULTAT</button>
-        </div>
-
-        <div class="list-container" id="results-list"></div>
-    </div>
+    </section>
 
     <script>
-        let usedHistory = [];
-        let badCows = JSON.parse(localStorage.getItem('ranch_bad_cows') || '[]');
-        let results = JSON.parse(localStorage.getItem('ranch_results') || '[]');
+        // --- DONNÉES & SAUVEGARDE AUTOMATIQUE ---
+        let appData = {
+            compteur: "-",
+            vaches: [],
+            resultats: []
+        };
 
-        const classOrder = ["Rookie", "LTD", "INT LTD", "INT OPEN", "OPEN"];
-
-        function switchTab(pageId, btn) {
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(pageId).classList.add('active');
-            btn.classList.add('active');
-        }
-
-        function toggleCowFormMode() {
-            const mode = document.getElementById('identification-mode').value;
-            if (mode === 'herd') {
-                document.getElementById('form-mode-herd').style.display = 'block';
-                document.getElementById('form-mode-collar').style.display = 'none';
-            } else {
-                document.getElementById('form-mode-herd').style.display = 'none';
-                document.getElementById('form-mode-collar').style.display = 'block';
+        // Charger les données sauvegardées au démarrage
+        window.onload = function() {
+            const savedData = localStorage.getItem('ranchSortingData');
+            if (savedData) {
+                appData = JSON.parse(savedData);
             }
+            renderAll();
+        };
+
+        // Sauvegarder dans localStorage
+        function saveData() {
+            localStorage.setItem('ranchSortingData', JSON.stringify(appData));
+            renderAll();
         }
 
-        function renderKeypad() {
-            const grid1to9 = document.getElementById('grid-1-9');
-            const zeroContainer = document.getElementById('zero-container');
-            const remainingDisplay = document.getElementById('remaining-display');
-
-            grid1to9.innerHTML = '';
-            zeroContainer.innerHTML = '';
-
-            for (let i = 1; i <= 9; i++) {
-                const btn = document.createElement('button');
-                btn.className = 'btn-num' + (usedHistory.includes(i) ? ' used' : '');
-                btn.innerText = i;
-                btn.onclick = () => toggleNum(i);
-                grid1to9.appendChild(btn);
-            }
-
-            const btnZero = document.createElement('button');
-            btnZero.className = 'btn-zero' + (usedHistory.includes(0) ? ' used' : '');
-            btnZero.innerText = '0';
-            btnZero.onclick = () => toggleNum(0);
-            zeroContainer.appendChild(btnZero);
-
-            const remaining = [];
-            for (let i = 0; i <= 9; i++) {
-                if (!usedHistory.includes(i)) remaining.push(i);
-            }
-            remainingDisplay.innerText = remaining.length > 0 ? remaining.join(' ') : '--';
-        }
-
-        function toggleNum(num) {
-            const index = usedHistory.indexOf(num);
-            if (index > -1) usedHistory.splice(index, 1);
-            else usedHistory.push(num);
-            renderKeypad();
-        }
-
-        function undo() {
-            if (usedHistory.length > 0) {
-                usedHistory.pop();
-                renderKeypad();
-            }
-        }
-
-        function resetKeypad() {
-            usedHistory = [];
-            renderKeypad();
-        }
-
-        function saveBadCow() {
-            const mode = document.getElementById('identification-mode').value;
-            const num = document.getElementById('cow-num').value.trim();
-            const reason = document.getElementById('cow-reason').value;
-
-            if (num === '') return;
-
-            let record = { id: Date.now(), mode, num, reason };
-
-            if (mode === 'herd') {
-                const herdNum = document.getElementById('herd-num').value.trim();
-                if (herdNum === '') return;
-                record.herdNum = parseInt(herdNum);
-            } else {
-                const fond = document.getElementById('col-fond').value;
-                const numColor = document.getElementById('col-num').value;
-                record.collar = `Fond ${fond} / Num ${numColor}`;
-            }
-
-            badCows.push(record);
-            localStorage.setItem('ranch_bad_cows', JSON.stringify(badCows));
+        // --- GESTION DES ONGLETS ---
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
             
-            document.getElementById('cow-num').value = '';
-            renderBadCows();
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
         }
 
-        function deleteBadCow(id) {
-            badCows = badCows.filter(c => c.id !== id);
-            localStorage.setItem('ranch_bad_cows', JSON.stringify(badCows));
-            renderBadCows();
+        // --- FONCTIONS ONGLET 1 (COMPTEUR) ---
+        function pressKey(val) {
+            appData.compteur = val;
+            saveData();
         }
 
-        function renderBadCows() {
-            const container = document.getElementById('bad-cow-list');
-            container.innerHTML = '';
-
-            if (badCows.length === 0) {
-                container.innerHTML = '<div style="text-align:center; color:#666; padding:20px;">Aucune vache difficile enregistree.</div>';
-                return;
-            }
-
-            const herdCows = badCows.filter(c => c.mode === 'herd');
-            const collarCows = badCows.filter(c => c.mode === 'collar' || !c.mode);
-
-            if (herdCows.length > 0) {
-                const herds = [...new Set(herdCows.map(c => c.herdNum))].sort((a, b) => a - b);
-                herds.forEach(herd => {
-                    const header = document.createElement('div');
-                    header.className = 'herd-group-header';
-                    header.innerText = `TROUPEAU NUM ${herd}`;
-                    container.appendChild(header);
-
-                    herdCows.filter(c => c.herdNum === herd).forEach(cow => {
-                        const item = document.createElement('div');
-                        item.className = 'item-card';
-                        item.style.borderLeftColor = 'var(--danger)';
-                        item.innerHTML = `
-                            <div class="item-info">
-                                <div class="item-title">Vache Num ${cow.num} - <span style="color:var(--danger)">${cow.reason}</span></div>
-                            </div>
-                            <button class="btn-del" onclick="deleteBadCow(${cow.id})">X</button>
-                        `;
-                        container.appendChild(item);
-                    });
-                });
-            }
-
-            if (collarCows.length > 0) {
-                const collarGroups = [...new Set(collarCows.map(c => c.collar || 'Colliers'))];
-                collarGroups.forEach(grp => {
-                    const header = document.createElement('div');
-                    header.className = 'herd-group-header';
-                    header.style.backgroundColor = '#444';
-                    header.innerText = `COLLIER : ${grp}`;
-                    container.appendChild(header);
-
-                    collarCows.filter(c => (c.collar || 'Colliers') === grp).forEach(cow => {
-                        const item = document.createElement('div');
-                        item.className = 'item-card';
-                        item.style.borderLeftColor = 'var(--danger)';
-                        item.innerHTML = `
-                            <div class="item-info">
-                                <div class="item-title">Vache Num ${cow.num} - <span style="color:var(--danger)">${cow.reason}</span></div>
-                                ${cow.collar ? `<div class="item-detail">${cow.collar}</div>` : ''}
-                            </div>
-                            <button class="btn-del" onclick="deleteBadCow(${cow.id})">X</button>
-                        `;
-                        container.appendChild(item);
-                    });
-                });
-            }
+        function resetCompteur() {
+            appData.compteur = "-";
+            saveData();
         }
 
-        function saveResult() {
-            const rider = document.getElementById('rider-name').value.trim();
-            const classType = document.getElementById('class-type').value;
-            if (!rider) return;
+        // --- FONCTIONS ONGLET 2 (VACHES) ---
+        function ajouterVache() {
+            const num = document.getElementById('vache-num').value;
+            const prob = document.getElementById('vache-probleme').value;
 
-            const g1c = parseInt(document.getElementById('g1-cows').value) || 0;
-            const g1t = parseFloat(document.getElementById('g1-time').value) || 0;
-            const g2c = parseInt(document.getElementById('g2-cows').value) || 0;
-            const g2t = parseFloat(document.getElementById('g2-time').value) || 0;
+            if (num === "") return alert("Veuillez indiquer un numéro de vache.");
 
-            const totalCows = g1c + g2c;
-            const totalTime = (g1t + g2t).toFixed(2);
-
-            const record = { id: Date.now(), rider, classType, g1c, g1t, g2c, g2t, totalCows, totalTime };
-
-            results.push(record);
-            localStorage.setItem('ranch_results', JSON.stringify(results));
-
-            document.getElementById('rider-name').value = '';
-            document.getElementById('g1-cows').value = ''; document.getElementById('g1-time').value = '';
-            document.getElementById('g2-cows').value = ''; document.getElementById('g2-time').value = '';
-
-            renderResults();
+            appData.vaches.push({ num: num, prob: prob, id: Date.now() });
+            document.getElementById('vache-num').value = "";
+            saveData();
         }
 
-        function deleteResult(id) {
-            results = results.filter(r => r.id !== id);
-            localStorage.setItem('ranch_results', JSON.stringify(results));
-            renderResults();
+        function supprimerVache(id) {
+            appData.vaches = appData.vaches.filter(item => item.id !== id);
+            saveData();
         }
 
-        function renderResults() {
-            const container = document.getElementById('results-list');
-            container.innerHTML = '';
+        // --- FONCTIONS ONGLET 3 (RÉSULTATS) ---
+        function ajouterResultat() {
+            const equipe = document.getElementById('res-equipe').value;
+            const classe = document.getElementById('res-classe').value;
+            const vaches = document.getElementById('res-vaches').value;
+            const temps = document.getElementById('res-temps').value;
 
-            if (results.length === 0) {
-                container.innerHTML = '<div style="text-align:center; color:#666; padding:20px;">Aucun score enregistre.</div>';
-                return;
-            }
+            if (!equipe) return alert("Veuillez entrer un nom d'équipe ou de cavalier.");
 
-            classOrder.forEach(cls => {
-                const classResults = results.filter(r => r.classType === cls);
-                if (classResults.length > 0) {
-                    const header = document.createElement('div');
-                    header.className = 'class-group-header';
-                    header.innerText = `CLASSE ${cls}`;
-                    container.appendChild(header);
+            appData.resultats.push({
+                equipe: equipe,
+                classe: classe,
+                vaches: vaches || 0,
+                temps: temps || "-",
+                id: Date.now()
+            });
 
-                    classResults.forEach((res) => {
-                        const item = document.createElement('div');
-                        item.className = 'item-card';
-                        item.innerHTML = `
-                            <div class="item-info">
-                                <div class="item-title">${res.rider}</div>
-                                <div class="item-badge">${res.classType}</div>
-                                <div class="item-detail">
-                                    <strong>GO 1 :</strong> ${res.g1c} vaches (${res.g1t}s)<br>
-                                    <strong>GO 2 :</strong> ${res.g2c} vaches (${res.g2t}s)
-                                </div>
-                                <div class="item-total">TOTAL : ${res.totalCows} vaches - ${res.totalTime} sec</div>
-                            </div>
-                            <button class="btn-del" onclick="deleteResult(${res.id})">X</button>
-                        `;
-                        container.appendChild(item);
-                    });
-                }
+            document.getElementById('res-equipe').value = "";
+            document.getElementById('res-vaches').value = "";
+            document.getElementById('res-temps').value = "";
+            saveData();
+        }
+
+        function supprimerResultat(id) {
+            appData.resultats = appData.resultats.filter(item => item.id !== id);
+            saveData();
+        }
+
+        // --- MISE À JOUR DE L'AFFICHAGE ---
+        function renderAll() {
+            // 1. Compteur
+            document.getElementById('display-vache').innerText = appData.compteur;
+
+            // 2. Vaches
+            const listeVaches = document.getElementById('liste-vaches');
+            listeVaches.innerHTML = "";
+            appData.vaches.forEach(v => {
+                listeVaches.innerHTML += `
+                    <li>
+                        <span><strong>Vache N°${v.num}</strong> : ${v.prob}</span>
+                        <button class="btn-danger" onclick="supprimerVache(${v.id})">X</button>
+                    </li>`;
+            });
+
+            // 3. Résultats
+            const listeRes = document.getElementById('liste-resultats');
+            listeRes.innerHTML = "";
+            appData.resultats.forEach(r => {
+                listeRes.innerHTML += `
+                    <li>
+                        <span><strong>${r.equipe}</strong> (${r.classe}) — <strong>${r.vaches} vaches</strong> en ${r.temps}</span>
+                        <button class="btn-danger" onclick="supprimerResultat(${r.id})">X</button>
+                    </li>`;
             });
         }
-
-        renderKeypad();
-        renderBadCows();
-        renderResults();
     </script>
 </body>
 </html>
